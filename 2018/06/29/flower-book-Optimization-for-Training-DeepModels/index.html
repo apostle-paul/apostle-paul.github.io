@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。">
+<meta name="description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 <meta name="keywords" content="machine learning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="flower book: Optimization for Training DeepModels">
 <meta property="og:url" content="http://yoursite.com/2018/06/29/flower-book-Optimization-for-Training-DeepModels/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。">
+<meta property="og:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-28T16:05:36.949Z">
+<meta property="og:updated_time" content="2018-08-07T17:26:11.386Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flower book: Optimization for Training DeepModels">
-<meta name="twitter:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。">
+<meta name="twitter:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 
 
 
@@ -300,8 +300,47 @@
       
 
       
-        <p>换电脑把之前那个博客<a href="https://apostlepaul.github.io" target="_blank" rel="noopener">apostlepaul.github.io</a>的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。</p>
-
+        <p>换电脑把之前那个博客<a href="https://apostlepaul.github.io" target="_blank" rel="noopener">apostlepaul.github.io</a>的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。<br>本章内容：</p>
+<ol>
+<li>学习和优化的区别</li>
+<li>神经网络优化中的挑战</li>
+<li>基本算法</li>
+<li>参数初始化策略</li>
+<li>自适应学习率算法</li>
+<li>二阶近似方法</li>
+<li>优化策略和元算法<a id="more"></a>
+</li>
+</ol>
+<h3 id="1-How-Learning-Diﬀers-from-Pure-Optimization"><a href="#1-How-Learning-Diﬀers-from-Pure-Optimization" class="headerlink" title="1. How Learning Diﬀers from Pure Optimization"></a>1. How Learning Diﬀers from Pure Optimization</h3><p>深度模型训练的优化算法跟传统的优化算法不一样，主要体现在前者通常不是直接进行的。<br>具体来讲：我们关心的可能是测试集上某个难解的度量P，但是却需要通过降低一个代价函数J(θ)来间接地优化P。<br>典型的，我们会去优化训练集上的代价函数，即：</p>
+<script type="math/tex; mode=display">
+J(\theta) = \mathbb{E}_{(x,y)~\hat{P}_{data}}L(f(x;\theta),y), \tag{1}\label{1}</script><p>但其实，我们更期望优化的是数据生成分布pdata上的代价函数：</p>
+<script type="math/tex; mode=display">
+J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</script><h4 id="1-1-Empirical-Risk-Minimization"><a href="#1-1-Empirical-Risk-Minimization" class="headerlink" title="1.1  Empirical Risk Minimization"></a>1.1  Empirical Risk Minimization</h4><p>机器学习算法的目标是降低公式(???)所表达的泛化误差期望。这个量也叫做风险。<br>需要注意的是，假如我们知道真实的分布pdata(x,y)，那么最小化风险将会是一个优化算法问题。如果我们不知道这个真实的分布，而只有一个训练集，那么我们面对的是一个机器学习问题。<br>把机器学习问题转变为优化问题的最简单的办法就是最小化训练集上的期望损失。用训练集上的经验分布代替真实的分布：</p>
+<script type="math/tex; mode=display">
+\mathbb{E}_{(x,y)~\hat{P}_{data}}L(f(x;\theta),y) = 1/m \Sigma^m_{i=1}L(f(x^{(i)};\sigma),y^{(i)}),</script><p>已经有一些理论证明，在满足一定的条件的时候，经验风险的降低会使风险降低。<br>但是，使用最小化经验风险的方法有两个问题：</p>
+<ol>
+<li>但是经验风险最小化容易导致过拟合，高容量的模型很容易就记住训练集了，</li>
+<li>一些有用的代价函数没有有用的微分，例如0-1loss，而大多有效的现代优化算法都是基于梯度下降的。</li>
+</ol>
+<p>所以在深度学习的场景中，我们很少直接用经验风险最小化的方法，反之，我们会使用一个稍有不同的方法，我们真正优化的目标会更加不同于我们希望优化的目标。</p>
+<h4 id="1-2-Surrogate-Loss-Functions-and-Early-Stopping"><a href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping" class="headerlink" title="1.2 Surrogate Loss Functions and Early Stopping"></a>1.2 Surrogate Loss Functions and Early Stopping</h4><p>我们经常会使用到代理损失函数，原因是：</p>
+<ol>
+<li>有时候真正的目标损失函数是不可解的，例如最简单的0-1分类，如果直接用0-1损失，那么这个优化算法将是输入维度的指数级；</li>
+<li>代理损失函数能学到更多，如训练集上的0-1损失已经为0的时候，代理损失函数的继续训练会提供测试集上的效果，会增强鲁棒性。</li>
+</ol>
+<p>纯优化算法经常会在一个局部极小值点停止迭代，但是机器学习优化算法不会，机器学习优化算法满足了提前停止的条件（如在测试集上的真实损失函数已经ok）就会停止，而不care当前的代理损失函数的在停止时的梯度是大是小。</p>
+<h4 id="1-3-Batch-and-Minibatch-Algorithms"><a href="#1-3-Batch-and-Minibatch-Algorithms" class="headerlink" title="1.3 Batch and Minibatch Algorithms"></a>1.3 Batch and Minibatch Algorithms</h4><p>机器学习算法跟一般优化算法的一个区别是其目标函数同城可以分解为训练样本上的求和。<br>在实践中，通常用一部分样本来估计整个代价函数的期望，然后对参数进行更新。原因在于：</p>
+<ol>
+<li>增加样本数，计算代价增大，获得的收益却低于线性的。例如样本均值标准差为δ/(√n)，其中δ是样本真实标准差。分母表明了，样本数从100增加到100000，计算代价增加了100倍，收益却只有10倍。</li>
+<li>实际的训练集中有冗余，大量的样本对梯度的贡献是相似的。</li>
+</ol>
+<p>有些算法对采样误差很敏感，可能有两个原因：</p>
+<ol>
+<li>算法使用的信息很难在小数据集上准确估计；</li>
+<li>使用了会放大采用误差的信息。</li>
+</ol>
+<p>要保证minibatch是随机抽取的，因为现实中很多样本采集在顺序上是相关的。<br>从online learning我们可以看到SGD会减小泛化误差的原因：模型看到的每一个样本，都是从数据生成分布pdata(x,y)中得来的，没有重复。所以我们可以从mini batch中计算出泛化误差梯度的无偏估计。<br>分minibatch常用的做法是，讲数据打乱，分成相应的minibatch并存储，在模型训练的时候，用数据训练多遍模型。<br>需要注意的是只有在第一遍的时候，得到的是无偏估计，因为数据没有被重用，以后得到的都是有偏估计。但依然要训练多遍的原因是：多遍训练给训练误差带来的降低，与增加训练误差和评估误差的gap相比，还是有收益的。</p>
+<h3 id="2-Challenges-in-Neural-Network-Optimization"><a href="#2-Challenges-in-Neural-Network-Optimization" class="headerlink" title="2. Challenges in Neural Network Optimization"></a>2. Challenges in Neural Network Optimization</h3><h3 id="3-Basic-Algorithms"><a href="#3-Basic-Algorithms" class="headerlink" title="3. Basic Algorithms"></a>3. Basic Algorithms</h3><h3 id="4-Parameter-Initialization-Strategies"><a href="#4-Parameter-Initialization-Strategies" class="headerlink" title="4. Parameter Initialization Strategies"></a>4. Parameter Initialization Strategies</h3><h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h3 id="7-Optimization-Strategies-and-Meta-Algorithms"><a href="#7-Optimization-Strategies-and-Meta-Algorithms" class="headerlink" title="7. Optimization Strategies and Meta-Algorithms"></a>7. Optimization Strategies and Meta-Algorithms</h3>
       
     </div>
     
@@ -375,8 +414,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -427,6 +475,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-How-Learning-Diﬀers-from-Pure-Optimization"><span class="nav-number">1.</span> <span class="nav-text">1. How Learning Diﬀers from Pure Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Empirical-Risk-Minimization"><span class="nav-number">1.1.</span> <span class="nav-text">1.1  Empirical Risk Minimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Surrogate Loss Functions and Early Stopping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Batch-and-Minibatch-Algorithms"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Batch and Minibatch Algorithms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Challenges-in-Neural-Network-Optimization"><span class="nav-number">2.</span> <span class="nav-text">2. Challenges in Neural Network Optimization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Basic-Algorithms"><span class="nav-number">3.</span> <span class="nav-text">3. Basic Algorithms</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Parameter-Initialization-Strategies"><span class="nav-number">4.</span> <span class="nav-text">4. Parameter Initialization Strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Algorithms-with-Adaptive-Learning-Rates"><span class="nav-number">5.</span> <span class="nav-text">5. Algorithms with Adaptive Learning Rates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Approximate-Second-Order-Methods"><span class="nav-number">6.</span> <span class="nav-text">6. Approximate Second-Order Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Optimization-Strategies-and-Meta-Algorithms"><span class="nav-number">7.</span> <span class="nav-text">7. Optimization Strategies and Meta-Algorithms</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
