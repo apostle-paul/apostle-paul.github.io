@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-07T17:26:11.386Z">
+<meta property="og:updated_time" content="2018-08-25T16:14:50.081Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flower book: Optimization for Training DeepModels">
 <meta name="twitter:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
@@ -315,9 +315,9 @@
 <script type="math/tex; mode=display">
 J(\theta) = \mathbb{E}_{(x,y)~\hat{P}_{data}}L(f(x;\theta),y), \tag{1}\label{1}</script><p>但其实，我们更期望优化的是数据生成分布pdata上的代价函数：</p>
 <script type="math/tex; mode=display">
-J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</script><h4 id="1-1-Empirical-Risk-Minimization"><a href="#1-1-Empirical-Risk-Minimization" class="headerlink" title="1.1  Empirical Risk Minimization"></a>1.1  Empirical Risk Minimization</h4><p>机器学习算法的目标是降低公式(???)所表达的泛化误差期望。这个量也叫做风险。<br>需要注意的是，假如我们知道真实的分布pdata(x,y)，那么最小化风险将会是一个优化算法问题。如果我们不知道这个真实的分布，而只有一个训练集，那么我们面对的是一个机器学习问题。<br>把机器学习问题转变为优化问题的最简单的办法就是最小化训练集上的期望损失。用训练集上的经验分布代替真实的分布：</p>
+J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</script><h4 id="1-1-Empirical-Risk-Minimization"><a href="#1-1-Empirical-Risk-Minimization" class="headerlink" title="1.1  Empirical Risk Minimization"></a>1.1  Empirical Risk Minimization</h4><p>机器学习算法的目标是降低公式$\eqref{2}$所表达的泛化误差期望。这个量也叫做风险。<br>需要注意的是，假如我们知道真实的分布pdata(x,y)，那么最小化风险将会是一个优化算法问题。如果我们不知道这个真实的分布，而只有一个训练集，那么我们面对的是一个机器学习问题。<br>把机器学习问题转变为优化问题的最简单的办法就是最小化训练集上的期望损失。用训练集上的经验分布代替真实的分布：</p>
 <script type="math/tex; mode=display">
-\mathbb{E}_{(x,y)~\hat{P}_{data}}L(f(x;\theta),y) = 1/m \Sigma^m_{i=1}L(f(x^{(i)};\sigma),y^{(i)}),</script><p>已经有一些理论证明，在满足一定的条件的时候，经验风险的降低会使风险降低。<br>但是，使用最小化经验风险的方法有两个问题：</p>
+\mathbb{E}_{(x,y)~\hat{P}_{data}}L(f(x;\theta),y) = 1/m \Sigma^m_{i=1}L(f(x^{(i)};\sigma),y^{(i)}), \tag{3}\label{3}</script><p>已经有一些理论证明，在满足一定的条件的时候，经验风险的降低会使风险降低。<br>但是，使用最小化经验风险的方法有两个问题：</p>
 <ol>
 <li>但是经验风险最小化容易导致过拟合，高容量的模型很容易就记住训练集了，</li>
 <li>一些有用的代价函数没有有用的微分，例如0-1loss，而大多有效的现代优化算法都是基于梯度下降的。</li>
@@ -340,7 +340,41 @@ J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</scrip
 <li>使用了会放大采用误差的信息。</li>
 </ol>
 <p>要保证minibatch是随机抽取的，因为现实中很多样本采集在顺序上是相关的。<br>从online learning我们可以看到SGD会减小泛化误差的原因：模型看到的每一个样本，都是从数据生成分布pdata(x,y)中得来的，没有重复。所以我们可以从mini batch中计算出泛化误差梯度的无偏估计。<br>分minibatch常用的做法是，讲数据打乱，分成相应的minibatch并存储，在模型训练的时候，用数据训练多遍模型。<br>需要注意的是只有在第一遍的时候，得到的是无偏估计，因为数据没有被重用，以后得到的都是有偏估计。但依然要训练多遍的原因是：多遍训练给训练误差带来的降低，与增加训练误差和评估误差的gap相比，还是有收益的。</p>
-<h3 id="2-Challenges-in-Neural-Network-Optimization"><a href="#2-Challenges-in-Neural-Network-Optimization" class="headerlink" title="2. Challenges in Neural Network Optimization"></a>2. Challenges in Neural Network Optimization</h3><h3 id="3-Basic-Algorithms"><a href="#3-Basic-Algorithms" class="headerlink" title="3. Basic Algorithms"></a>3. Basic Algorithms</h3><h3 id="4-Parameter-Initialization-Strategies"><a href="#4-Parameter-Initialization-Strategies" class="headerlink" title="4. Parameter Initialization Strategies"></a>4. Parameter Initialization Strategies</h3><h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h3 id="7-Optimization-Strategies-and-Meta-Algorithms"><a href="#7-Optimization-Strategies-and-Meta-Algorithms" class="headerlink" title="7. Optimization Strategies and Meta-Algorithms"></a>7. Optimization Strategies and Meta-Algorithms</h3>
+<h3 id="2-Challenges-in-Neural-Network-Optimization"><a href="#2-Challenges-in-Neural-Network-Optimization" class="headerlink" title="2. Challenges in Neural Network Optimization"></a>2. Challenges in Neural Network Optimization</h3><h4 id="2-1-Ill-Conditioning"><a href="#2-1-Ill-Conditioning" class="headerlink" title="2.1 Ill-Conditioning"></a>2.1 Ill-Conditioning</h4><p>“病态”指的是Hessian矩阵的处于病态。其发端是是梯度下降法。<br>对于一个优化目标f(x)，我们对其进行二阶泰勒展开，有：</p>
+<script type="math/tex; mode=display">
+f(x) \approx f(x^{(0)}) + (x - x^{(0)})^Tg + \frac{1}{2}(x - x^{(0)})^TH(x - x^{(0)}) \tag{4}\label{4}</script><p>如果我们的学习率是$\epsilon$，那么一次优化迭代的步长是$-{\epsilon}g$，一次优化迭代后的点为$x^{(0)}-{\epsilon}g$，带入上式，得：</p>
+<script type="math/tex; mode=display">
+f(x^{(0)}-{\epsilon}g) \approx f(x^{(0)}) - {\epsilon}g^Tg + \frac{1}{2} {\epsilon}^2 g^THg \tag{5}\label{5}</script><p>式$\eqref{5}$中等号右边的三项分别是：函数的原始值、函数斜率导致的预期改善、函数曲率导致的校正。<br>在一次迭代中，$g^THg$：</p>
+<ul>
+<li>如果为零，优化目标f(x)的下降程度跟我们的预期是一样的，</li>
+<li>如果为负，f(x)的下降比我们预期得更多，</li>
+<li>如果为正，f(x)的下降比我们预期得要少。</li>
+</ul>
+<p>而如果式$\eqref{5}$中的后两项加起来大于零，即：</p>
+<script type="math/tex; mode=display">
+\frac{1}{2} {\epsilon}^2 g^THg > {\epsilon}g^Tg</script><p>那么一次迭代，目标函数不会下降反而会上升，这就是病态了。</p>
+<p><code>在很多情况中，梯度范数不会在训练过程中显著缩小，但是g^THg的增长会超过一个数量级。其结果是尽管梯度很强，学习会变得非常缓慢，因为学习率必须收缩以弥补更强的曲率。</code></p>
+<h4 id="2-2-Local-Minima"><a href="#2-2-Local-Minima" class="headerlink" title="2.2 Local Minima"></a>2.2 Local Minima</h4><ol>
+<li>任何凸优化的问题都可以简化为寻找局部极小点，所有的局部极小点都是全局最小点。</li>
+<li>有些凸优化的底部是一个平坦的区域，其中任何一个点都是可以接受的。</li>
+<li>神经网络，是非凸的，会存在多个局部极小值，但是通常这些局部极小值并不是主要的问题。<ul>
+<li>这多个局部极小值，可能是由模型的不可辨识性带来的，在这些局部极小值点，都有相同的代价函数值。</li>
+<li>如果局部极小值比全局最小值点大很多，那么会是个问题，但是现在学者们现在猜想，对于足够大的神经网络而言，大部分局部极小值都具有很小的代价函数，而通常我们只是要寻找一个很小的代价函数，而不一定要是最小的。</li>
+</ul>
+</li>
+</ol>
+<p>一种判断是否遇到了局部极小值的办法，是画出梯度的范数随迭代的变化，如果梯度范数没有缩小到一个微小的值，那么该问题既不是局部极小值，也不是其他临界点。<br>不过，在高维空间，即使范数很微小，也有可能不是局部极小值带来的。</p>
+<h4 id="2-3-Plateaus-Saddle-Points-and-other-Flat-Regions"><a href="#2-3-Plateaus-Saddle-Points-and-other-Flat-Regions" class="headerlink" title="2.3 Plateaus, Saddle Points and other Flat Regions"></a>2.3 Plateaus, Saddle Points and other Flat Regions</h4><p>对于高维非凸函数，鞍点比局部极小值点更常见。<br><code>鞍点激增对于训练算法来说有哪些影响呢?对于只使用梯度信息的一阶优化算 法而言，目前情况还不清楚。鞍点附近的梯度通常会非常小。另一方面，实验中梯度 下降似乎可以在许多情况下逃离鞍点。</code></p>
+<h4 id="2-4-Cliffs-and-Exploding-Gradients"><a href="#2-4-Cliffs-and-Exploding-Gradients" class="headerlink" title="2.4 Cliffs and Exploding Gradients"></a>2.4 Cliffs and Exploding Gradients</h4><p>多层神经网络通常存在像悬崖一样的斜率较大区域，这是由于几个较大的权重相乘导致的。直接梯度更新，情况会非常糟糕，会使参数弹射很远，之前的优化都白做了。<br>所以现在一般的优化算法都会在迭代上加bound，也就是梯度阶段，来避免这个问题。</p>
+<h4 id="2-5-Long-Term-Dependencies"><a href="#2-5-Long-Term-Dependencies" class="headerlink" title="2.5 Long-Term Dependencies"></a>2.5 Long-Term Dependencies</h4><h4 id="2-6-Inexact-Gradients"><a href="#2-6-Inexact-Gradients" class="headerlink" title="2.6 Inexact Gradients"></a>2.6 Inexact Gradients</h4><h4 id="2-7-Poor-Correspondence-between-Local-and-Global-Structure"><a href="#2-7-Poor-Correspondence-between-Local-and-Global-Structure" class="headerlink" title="2.7 Poor Correspondence between Local and Global Structure"></a>2.7 Poor Correspondence between Local and Global Structure</h4><p>基本上所有训练神经网络的方法，都是基于局部较小更新，而局部较小更新，可能存在的问题是：</p>
+<ol>
+<li>由于有些梯度只能近似计算，局部下降不能确定通往有效解的合理路径。</li>
+<li>由于病态，悬崖等问题的存在，即使路径正确，局部下降的步数也可能会非常多。</li>
+<li>在一些平坦区域上，局部下降不能找到有效的下降方向。</li>
+<li>在有些情况下，可能移动得太过贪心，导致反而远离了有效的解。</li>
+</ol>
+<p>因此，寻找合适的初始化点，很重要。</p>
+<h4 id="2-8-Theoretical-Limits-of-Optimization"><a href="#2-8-Theoretical-Limits-of-Optimization" class="headerlink" title="2.8 Theoretical Limits of Optimization"></a>2.8 Theoretical Limits of Optimization</h4><h3 id="3-Basic-Algorithms"><a href="#3-Basic-Algorithms" class="headerlink" title="3. Basic Algorithms"></a>3. Basic Algorithms</h3><h3 id="4-Parameter-Initialization-Strategies"><a href="#4-Parameter-Initialization-Strategies" class="headerlink" title="4. Parameter Initialization Strategies"></a>4. Parameter Initialization Strategies</h3><h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h3 id="7-Optimization-Strategies-and-Meta-Algorithms"><a href="#7-Optimization-Strategies-and-Meta-Algorithms" class="headerlink" title="7. Optimization Strategies and Meta-Algorithms"></a>7. Optimization Strategies and Meta-Algorithms</h3>
       
     </div>
     
@@ -485,7 +519,7 @@ J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</scrip
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-How-Learning-Diﬀers-from-Pure-Optimization"><span class="nav-number">1.</span> <span class="nav-text">1. How Learning Diﬀers from Pure Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Empirical-Risk-Minimization"><span class="nav-number">1.1.</span> <span class="nav-text">1.1  Empirical Risk Minimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Surrogate Loss Functions and Early Stopping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Batch-and-Minibatch-Algorithms"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Batch and Minibatch Algorithms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Challenges-in-Neural-Network-Optimization"><span class="nav-number">2.</span> <span class="nav-text">2. Challenges in Neural Network Optimization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Basic-Algorithms"><span class="nav-number">3.</span> <span class="nav-text">3. Basic Algorithms</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Parameter-Initialization-Strategies"><span class="nav-number">4.</span> <span class="nav-text">4. Parameter Initialization Strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Algorithms-with-Adaptive-Learning-Rates"><span class="nav-number">5.</span> <span class="nav-text">5. Algorithms with Adaptive Learning Rates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Approximate-Second-Order-Methods"><span class="nav-number">6.</span> <span class="nav-text">6. Approximate Second-Order Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Optimization-Strategies-and-Meta-Algorithms"><span class="nav-number">7.</span> <span class="nav-text">7. Optimization Strategies and Meta-Algorithms</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-How-Learning-Diﬀers-from-Pure-Optimization"><span class="nav-number">1.</span> <span class="nav-text">1. How Learning Diﬀers from Pure Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Empirical-Risk-Minimization"><span class="nav-number">1.1.</span> <span class="nav-text">1.1  Empirical Risk Minimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Surrogate Loss Functions and Early Stopping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Batch-and-Minibatch-Algorithms"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Batch and Minibatch Algorithms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Challenges-in-Neural-Network-Optimization"><span class="nav-number">2.</span> <span class="nav-text">2. Challenges in Neural Network Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Ill-Conditioning"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Ill-Conditioning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Local-Minima"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Local Minima</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Plateaus-Saddle-Points-and-other-Flat-Regions"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Plateaus, Saddle Points and other Flat Regions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-Cliffs-and-Exploding-Gradients"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Cliffs and Exploding Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-Long-Term-Dependencies"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 Long-Term Dependencies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-Inexact-Gradients"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 Inexact Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-Poor-Correspondence-between-Local-and-Global-Structure"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 Poor Correspondence between Local and Global Structure</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-8-Theoretical-Limits-of-Optimization"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 Theoretical Limits of Optimization</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Basic-Algorithms"><span class="nav-number">3.</span> <span class="nav-text">3. Basic Algorithms</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Parameter-Initialization-Strategies"><span class="nav-number">4.</span> <span class="nav-text">4. Parameter Initialization Strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Algorithms-with-Adaptive-Learning-Rates"><span class="nav-number">5.</span> <span class="nav-text">5. Algorithms with Adaptive Learning Rates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Approximate-Second-Order-Methods"><span class="nav-number">6.</span> <span class="nav-text">6. Approximate Second-Order Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Optimization-Strategies-and-Meta-Algorithms"><span class="nav-number">7.</span> <span class="nav-text">7. Optimization Strategies and Meta-Algorithms</span></a></li></ol></div>
             
 
           </div>
@@ -685,6 +719,26 @@ J(\theta) = \mathbb{E}_{(x,y)~p_{data}}L(f(x;\theta),y). \tag{2}\label{2}</scrip
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
 
