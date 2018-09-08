@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Paul&#39;s Garden">
 <meta property="og:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-09-08T15:14:29.948Z">
+<meta property="og:updated_time" content="2018-09-08T15:19:12.052Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flower book: Optimization for Training DeepModels">
 <meta name="twitter:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
@@ -498,25 +498,25 @@ W_{i,j} \sim U(-\sqrt{\frac{6}{m+n}}, \sqrt{\frac{6}{m+n}})</script><p>其中m�
 <h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><p>学习率对模型的性能有着显著的影响。</p>
 <h4 id="5-1-AdaGrad"><a href="#5-1-AdaGrad" class="headerlink" title="5.1 AdaGrad"></a>5.1 AdaGrad</h4><p>AdaGrad在凸优化背景下效果很好。<br>累加历史上各参数的梯度平方，对当前梯度进行缩放。</p>
 <script type="math/tex; mode=display">
-r \leftarrow r + g \bigodot g
-\Delta \theta \leftarrow - frac{\epsilon}{\delta + \sqrt{r}} \bigodot g
+r \leftarrow r + g \bigodot g \\
+\Delta \theta \leftarrow - \frac{\epsilon}{\delta + \sqrt{r}} \bigodot g \\
 \theta \leftarrow \theta + \Delta \theta</script><h4 id="5-2-RMSProp"><a href="#5-2-RMSProp" class="headerlink" title="5.2 RMSProp"></a>5.2 RMSProp</h4><p>修改了AdaGrad，改梯度积累为指数加权的移动平均，在非凸情况下表现更好。原因：</p>
 <ol>
 <li>AdaGrad在凸问题时能快速收敛。</li>
 <li>但是对于非凸问题，学习轨迹可能穿过很多不同的结构，最终达到了一个凸碗的区域。</li>
 <li>如果用AdaGrad的，这时候学习率可能在达到凸碗之前就已经太小了。</li>
 <li>RMSProp 使用指数衰减平均以丢弃遥远过去的历史，使其能够在找到凸碗状结构后快速收敛，它就像一个初始化于该碗状结构的 AdaGrad 算法实例。<script type="math/tex; mode=display">
-r \leftarrow (1 - \rho) + \rhl g \bigodot g
-\Delta \theta \leftarrow - frac{\epsilon}{\delta + \sqrt{r}} \bigodot g
+r \leftarrow (1 - \rho) + \rho g \bigodot g \\
+\Delta \theta \leftarrow - \frac{\epsilon}{\delta + \sqrt{r}} \bigodot g \\
 \theta \leftarrow \theta + \Delta \theta</script></li>
 </ol>
 <h4 id="5-3-Adam"><a href="#5-3-Adam" class="headerlink" title="5.3 Adam"></a>5.3 Adam</h4><p>Momentum + RMSProp， 一阶的指数加权衰减 + 二阶的指数加权衰减。</p>
 <script type="math/tex; mode=display">
-s \leftarrow \rho_1 s + (1 - \rho_1)g
-r \leftarrow \rho_2 r + (1 - \rho_2)g \bigodot g
-\hat{s} \leftarrow \frac{s}{1-\rho_{1}^{t}}
-\hat{r} \leftarrow \frac{r}{1-\rho_{2}^{t}}
-\Delta \theta = -\epsilon\frac{\hat{s}}{\sqrt{\hat{r}}+\delta}
+s \leftarrow \rho_1 s + (1 - \rho_1)g \\
+r \leftarrow \rho_2 r + (1 - \rho_2)g \bigodot g \\
+\hat{s} \leftarrow \frac{s}{1-\rho_{1}^{t}} \\
+\hat{r} \leftarrow \frac{r}{1-\rho_{2}^{t}} \\
+\Delta \theta = -\epsilon\frac{\hat{s}}{\sqrt{\hat{r}}+\delta} \\
 \theta \leftarrow \theta + \Delta</script><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h4 id="6-1-Newton-Method"><a href="#6-1-Newton-Method" class="headerlink" title="6.1 Newton Method"></a>6.1 Newton Method</h4><p>牛顿法是基于泰勒级数的二次展开。</p>
 <script type="math/tex; mode=display">
 J(\theta) \approx J(\theta_0) + (\theta - \theta_0)\Delta_{\theta}J(\theta_0) - \frac{1}{2}(\theta - \theta_0)^{T}H(\theta - \theta_0)</script><p>对$\theta$求导，令导数为0，得到参数的更新规则：</p>
