@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Paul&#39;s Garden">
 <meta property="og:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-26T05:10:20.665Z">
+<meta property="og:updated_time" content="2018-09-08T15:14:29.948Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flower book: Optimization for Training DeepModels">
 <meta name="twitter:description" content="换电脑把之前那个博客apostlepaul.github.io的源码弄丢了，没有post了，懒得一篇篇恢复了，所以重新弄一个吧。本章内容：  学习和优化的区别 神经网络优化中的挑战 基本算法 参数初始化策略 自适应学习率算法 二阶近似方法 优化策略和元算法">
@@ -438,7 +438,105 @@ f(x^{(0)}-{\epsilon}g) \approx f(x^{(0)}) - {\epsilon}g^Tg + \frac{1}{2} {\epsil
 <li>$\epsilon_0$太小，会使学习变得非常缓慢。</li>
 </ul>
 <p><code>选取$\epsilon_0$时，最好监督刚开始的几轮迭代，选取比最优的那个高一点的学习率， 但是又不会高到会引起剧烈震荡。</code><br>SGD一个重要的性质是每一步迭代的时间不依赖训练样本的多少。另一个重要性质是，只需要少量样本就可以实现在初始几次迭代的快速更新。本章的其他改进算法都受益于这个性质。</p>
-<h3 id="4-Parameter-Initialization-Strategies"><a href="#4-Parameter-Initialization-Strategies" class="headerlink" title="4. Parameter Initialization Strategies"></a>4. Parameter Initialization Strategies</h3><h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h3 id="7-Optimization-Strategies-and-Meta-Algorithms"><a href="#7-Optimization-Strategies-and-Meta-Algorithms" class="headerlink" title="7. Optimization Strategies and Meta-Algorithms"></a>7. Optimization Strategies and Meta-Algorithms</h3>
+<h4 id="3-2-Momentum"><a href="#3-2-Momentum" class="headerlink" title="3.2 Momentum"></a>3.2 Momentum</h4><p>随机梯度下降学习过程有时候会很慢。动量方法可以加速学习，特别是对高曲率，小但一致的梯度，或是带噪声的梯度有效。</p>
+<ul>
+<li>从形式上看，动量算法引入变量v充当速度角色。我们假设是单位质量，所以动量就是速度向量v。</li>
+<li>从优化算法上看，v就是描述参数空间移动的方向和速率。</li>
+<li>从计算逻辑上看，v被设为负梯度的指数衰减平均。</li>
+</ul>
+<hr>
+<p>Algorithms 2： SGD with momentum<br>Require: learning rate $\epsilon$, momentum parameter $\alpha$<br>Require: Initial parameters $\theta$, initial valocity $v$<br>while stop cretorien not met do:</p>
+<ul>
+<li>sample minibatch with m examples</li>
+<li>compute gradient estimate: $g \leftarrow \frac{1}{m}\Delta_\theta \Sigma_{i}L(f(x^{(i)};\theta), y^{(i)})$</li>
+<li>compute velocity update $v \leftarrow \alpha v - \epsilon g$</li>
+<li>update parameters $\theta \leftarrow \theta + v$</li>
+</ul>
+<p>end while</p>
+<hr>
+<p><code>在实践中，α的一般取值为 0.5，0.9 和 0.99。和学习率一样，α也会随着时间不断调整。一般初始值是一个较小的值，随后会慢慢变大。随着时间推移调整 α 没有收缩 ε重要。</code></p>
+<h4 id="3-3-Nesterov-Momentum"><a href="#3-3-Nesterov-Momentum" class="headerlink" title="3.3 Nesterov Momentum"></a>3.3 Nesterov Momentum</h4><p>Nesterov 梯度加速算法启发了这种Momentum的变形。<br>Nesterov momentum跟标准momentum的区别是：<strong>Nesterov 中计算梯度实在施加当前速度之后，相当于给标准momentum加了一个校正因子。</strong></p>
+<hr>
+<p>Algorithms 3： SGD with Nesterov momentum<br>Require: learning rate $\epsilon$, momentum parameter $\alpha$<br>Require: Initial parameters $\theta$, initial valocity $v$<br>while stop cretorien not met do:</p>
+<ul>
+<li>sample minibatch with m examples</li>
+<li>apply interim update: $\tilde{\theta} \leftarrow \theta + \alpha v</li>
+<li>compute gradient estimate: $g \leftarrow \frac{1}{m}\Delta_\theta \Sigma_{i}L(f(x^{(i)};\tilde{\theta}), y^{(i)})$</li>
+<li>compute velocity update $v \leftarrow \alpha v - \epsilon g$</li>
+<li>update parameters $\theta \leftarrow \theta + v$</li>
+</ul>
+<p>end while</p>
+<hr>
+<p><strong>效果</strong>: 在凸批量梯度情况下，额外误差收敛率由O(1/k)降低到O(1/k^2)。对随机梯度没有改进效果。</p>
+<h3 id="4-Parameter-Initialization-Strategies"><a href="#4-Parameter-Initialization-Strategies" class="headerlink" title="4. Parameter Initialization Strategies"></a>4. Parameter Initialization Strategies</h3><p>有些优化算是非迭代的，只求一个解。还有一些优化算法是迭代的，但是它们可以在可接受的时间范围内收敛到可接受的解。<br>但是深度学习通常没有这种比较好的性质，初始值对它的影响比较大：</p>
+<ul>
+<li>会影响到是否收敛</li>
+<li>会影响收敛的速度</li>
+<li>会影响收敛到到的loss的高低</li>
+<li>在差不多的Loss水平，会影响泛化能力的强弱</li>
+</ul>
+<p>目前我们对于初始化策略的理解还是简单的，启发式的。</p>
+<p>现在完全确定的唯一特性是初始参数在不同的节点间“破坏对称性”。</p>
+<p>通常情况下，我们随机初始化节点权重，从高斯或均匀分布中随机挑选出值，可以启发式地挑选偏执常数。</p>
+<h4 id="权重"><a href="#权重" class="headerlink" title="权重"></a>权重</h4><p>目前有的一些经验是:</p>
+<ul>
+<li>较大的初始权重有助于破坏对称性，避免冗余单元</li>
+<li>但是太大的权重，可能在迭代的过程中梯度爆炸，使节点saturate，对于CNN，可能会导致混沌（choas，对很小的绕对很敏感）</li>
+</ul>
+<p>优化观点建议权重应该足够大以成功传播信息，但是正则化希望其小一点。</p>
+<p>一种简单的启发式方法是从分布$U(-\frac{1}{\sqrt{m}}, \frac{1}{\sqrt{m}})$中采样权重，其中m是输入节点的个数。<br>Bengio建议采用标准初始化：</p>
+<script type="math/tex; mode=display">
+W_{i,j} \sim U(-\sqrt{\frac{6}{m+n}}, \sqrt{\frac{6}{m+n}})</script><p>其中m和n分别是输入和输出的个数。<br>这种方法是使节点具有相同激活方差和相同梯度方差的折衷。</p>
+<p>Saxe推荐初始化为随机正交矩阵，仔细挑选负责每一层非线性缩 放或增益 (gain) 因子 g。<br>Marten提出了一种稀疏初始化(sparse initialization)的方案。<br>以上是针对权重的初始化，其他参数的初始化通常更容易一些。</p>
+<h4 id="偏置"><a href="#偏置" class="headerlink" title="偏置"></a>偏置</h4><p>设置偏置的方法必须和设置权重的方法协调。设置偏置为零通常在大多数权重初始化方案中是可行的。存在一些我们可能设置偏置为非零值的情况:</p>
+<ul>
+<li>连在输出上的偏置，设置为输出的边缘统计通常是好的；</li>
+<li>在非线性的节点上，设置非0偏置以避免saturate;</li>
+<li>有时，一个单元会控制其他单元能否参与到等式中。例如LSTM中会设置偏置为1。</li>
+</ul>
+<h4 id="方差或精确度参数"><a href="#方差或精确度参数" class="headerlink" title="方差或精确度参数"></a>方差或精确度参数</h4><p>通常我们能安全地初始化方差或精确度参数为 1。<br>另一种方 法假设初始权重足够接近零，设置偏置可以忽略权重的影响，然后设定偏置以产生输出的正确边缘均值，并将方差参数设置为训练集输出的边缘方差。</p>
+<h3 id="5-Algorithms-with-Adaptive-Learning-Rates"><a href="#5-Algorithms-with-Adaptive-Learning-Rates" class="headerlink" title="5. Algorithms with Adaptive Learning Rates"></a>5. Algorithms with Adaptive Learning Rates</h3><p>学习率对模型的性能有着显著的影响。</p>
+<h4 id="5-1-AdaGrad"><a href="#5-1-AdaGrad" class="headerlink" title="5.1 AdaGrad"></a>5.1 AdaGrad</h4><p>AdaGrad在凸优化背景下效果很好。<br>累加历史上各参数的梯度平方，对当前梯度进行缩放。</p>
+<script type="math/tex; mode=display">
+r \leftarrow r + g \bigodot g
+\Delta \theta \leftarrow - frac{\epsilon}{\delta + \sqrt{r}} \bigodot g
+\theta \leftarrow \theta + \Delta \theta</script><h4 id="5-2-RMSProp"><a href="#5-2-RMSProp" class="headerlink" title="5.2 RMSProp"></a>5.2 RMSProp</h4><p>修改了AdaGrad，改梯度积累为指数加权的移动平均，在非凸情况下表现更好。原因：</p>
+<ol>
+<li>AdaGrad在凸问题时能快速收敛。</li>
+<li>但是对于非凸问题，学习轨迹可能穿过很多不同的结构，最终达到了一个凸碗的区域。</li>
+<li>如果用AdaGrad的，这时候学习率可能在达到凸碗之前就已经太小了。</li>
+<li>RMSProp 使用指数衰减平均以丢弃遥远过去的历史，使其能够在找到凸碗状结构后快速收敛，它就像一个初始化于该碗状结构的 AdaGrad 算法实例。<script type="math/tex; mode=display">
+r \leftarrow (1 - \rho) + \rhl g \bigodot g
+\Delta \theta \leftarrow - frac{\epsilon}{\delta + \sqrt{r}} \bigodot g
+\theta \leftarrow \theta + \Delta \theta</script></li>
+</ol>
+<h4 id="5-3-Adam"><a href="#5-3-Adam" class="headerlink" title="5.3 Adam"></a>5.3 Adam</h4><p>Momentum + RMSProp， 一阶的指数加权衰减 + 二阶的指数加权衰减。</p>
+<script type="math/tex; mode=display">
+s \leftarrow \rho_1 s + (1 - \rho_1)g
+r \leftarrow \rho_2 r + (1 - \rho_2)g \bigodot g
+\hat{s} \leftarrow \frac{s}{1-\rho_{1}^{t}}
+\hat{r} \leftarrow \frac{r}{1-\rho_{2}^{t}}
+\Delta \theta = -\epsilon\frac{\hat{s}}{\sqrt{\hat{r}}+\delta}
+\theta \leftarrow \theta + \Delta</script><h3 id="6-Approximate-Second-Order-Methods"><a href="#6-Approximate-Second-Order-Methods" class="headerlink" title="6. Approximate Second-Order Methods"></a>6. Approximate Second-Order Methods</h3><h4 id="6-1-Newton-Method"><a href="#6-1-Newton-Method" class="headerlink" title="6.1 Newton Method"></a>6.1 Newton Method</h4><p>牛顿法是基于泰勒级数的二次展开。</p>
+<script type="math/tex; mode=display">
+J(\theta) \approx J(\theta_0) + (\theta - \theta_0)\Delta_{\theta}J(\theta_0) - \frac{1}{2}(\theta - \theta_0)^{T}H(\theta - \theta_0)</script><p>对$\theta$求导，令导数为0，得到参数的更新规则：</p>
+<script type="math/tex; mode=display">
+\theta^* = \theta_0 - H^{-1}\Delta_{\theta}J(\theta_0)</script><ul>
+<li>对于局部二次函数（H为正定矩阵），牛顿法会直接跳到极值点。</li>
+<li>是凸的但是非二次函数，可以用更新规则进行迭代。</li>
+<li>高维非凸，H的特征值并不都是正的（鞍点），可以给H加正则（加对角矩阵），使调整后的H特征值都是正的。</li>
+</ul>
+<p>除了鞍点会限制牛顿法的使用，计算H的逆也是一个很大的负担。k*k的矩阵的逆，计算复杂度为$O(k^3)$。</p>
+<h4 id="6-2-Conjugate-Gradients"><a href="#6-2-Conjugate-Gradients" class="headerlink" title="6.2 Conjugate Gradients"></a>6.2 Conjugate Gradients</h4><h4 id="6-3-BFGS"><a href="#6-3-BFGS" class="headerlink" title="6.3 BFGS"></a>6.3 BFGS</h4><h3 id="7-Optimization-Strategies-and-Meta-Algorithms"><a href="#7-Optimization-Strategies-and-Meta-Algorithms" class="headerlink" title="7. Optimization Strategies and Meta-Algorithms"></a>7. Optimization Strategies and Meta-Algorithms</h3><h4 id="7-1-Batch-Normalization"><a href="#7-1-Batch-Normalization" class="headerlink" title="7.1 Batch Normalization"></a>7.1 Batch Normalization</h4><p>并不是一个优化算法，而是一个自适应的重参数化的方法，试图解决训练非常深的模型的困难。<br>主要就是对每一层每个节点的mini-batch的输出，进行normalization操作。这样保证下一层接受到的输入，都是一个标准正态分布。<br>这意味着，梯度不会再简单地增加 hi 的标准差或均值;标准化操作会 除掉这一操作的影响，归零其在梯度中的元素。<br>在测试阶段，μ 和 σ 可以被替换为训练阶段收集的运行均值。这使得模型可以 对单一样本评估，而无需使用定义于整个小批量的 μ 和 σ。</p>
+<p>标准化一个单元的均值和标准差会降低包含该单元的神经网络的表达能力。为了保持网络的表现力，通常会将批量隐藏单元激活$H$替换为 γH ′ + β，而不是简单地使用标准化的H’。<br>(后续补充一些细节)</p>
+<h4 id="7-2-Coordinate-Desent"><a href="#7-2-Coordinate-Desent" class="headerlink" title="7.2 Coordinate Desent"></a>7.2 Coordinate Desent</h4><p>在某些情况下，将一个优化问题分解成几个部分，可以更快地解决原问题。<br>简单来说就是固定某些变量，迭代另外一些变量，反复迭代进行。<br>当优化问题中的不同变量能够清楚地分成相对独立的组，或是当优化一组变量 明显比优化所有变量效率更高时，坐标下降最有意义 。<br>当一个变量的值很大程度地影响另一个变量的最优值时，坐标下降不是一个很好的方法。</p>
+<h4 id="7-3-Polyak-avarage"><a href="#7-3-Polyak-avarage" class="headerlink" title="7.3 Polyak avarage"></a>7.3 Polyak avarage</h4><p>平均优化学习轨迹上的几个点，用于非凸问题上时，就是exponential decay。</p>
+<h4 id="7-4-supervise-pre-Training"><a href="#7-4-supervise-pre-Training" class="headerlink" title="7.4 supervise pre-Training"></a>7.4 supervise pre-Training</h4><p>有时，如果模型太复杂难以优化，或是如果任务非常困难，直接训练模型来解 决特定任务的挑战可能太大。有时训练一个较简单的模型来求解问题，然后使模型 更复杂会更有效。训练模型来求解一个简化的问题，然后转移到最后的问题，有时 也会更有效些。</p>
+<ul>
+<li>贪心监督预训练</li>
+<li>迁移学习</li>
+</ul>
+<h4 id="7-5-Designing-Models-to-Aid-Optimization"><a href="#7-5-Designing-Models-to-Aid-Optimization" class="headerlink" title="7.5 Designing Models to Aid Optimization"></a>7.5 Designing Models to Aid Optimization</h4><h4 id="7-6-Continuation-Methods-and-Curriculum-Learning"><a href="#7-6-Continuation-Methods-and-Curriculum-Learning" class="headerlink" title="7.6 Continuation Methods and Curriculum Learning"></a>7.6 Continuation Methods and Curriculum Learning</h4>
       
     </div>
     
@@ -608,7 +706,7 @@ f(x^{(0)}-{\epsilon}g) \approx f(x^{(0)}) - {\epsilon}g^Tg + \frac{1}{2} {\epsil
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-How-Learning-Diﬀers-from-Pure-Optimization"><span class="nav-number">1.</span> <span class="nav-text">1. How Learning Diﬀers from Pure Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Empirical-Risk-Minimization"><span class="nav-number">1.1.</span> <span class="nav-text">1.1  Empirical Risk Minimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Surrogate Loss Functions and Early Stopping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Batch-and-Minibatch-Algorithms"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Batch and Minibatch Algorithms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Challenges-in-Neural-Network-Optimization"><span class="nav-number">2.</span> <span class="nav-text">2. Challenges in Neural Network Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Ill-Conditioning"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Ill-Conditioning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Local-Minima"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Local Minima</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Plateaus-Saddle-Points-and-other-Flat-Regions"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Plateaus, Saddle Points and other Flat Regions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-Cliffs-and-Exploding-Gradients"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Cliffs and Exploding Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-Long-Term-Dependencies"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 Long-Term Dependencies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-Inexact-Gradients"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 Inexact Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-Poor-Correspondence-between-Local-and-Global-Structure"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 Poor Correspondence between Local and Global Structure</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-8-Theoretical-Limits-of-Optimization"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 Theoretical Limits of Optimization</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Basic-Algorithms"><span class="nav-number">3.</span> <span class="nav-text">3. Basic Algorithms</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-SGD"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 SGD</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Parameter-Initialization-Strategies"><span class="nav-number">4.</span> <span class="nav-text">4. Parameter Initialization Strategies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Algorithms-with-Adaptive-Learning-Rates"><span class="nav-number">5.</span> <span class="nav-text">5. Algorithms with Adaptive Learning Rates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Approximate-Second-Order-Methods"><span class="nav-number">6.</span> <span class="nav-text">6. Approximate Second-Order Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Optimization-Strategies-and-Meta-Algorithms"><span class="nav-number">7.</span> <span class="nav-text">7. Optimization Strategies and Meta-Algorithms</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-How-Learning-Diﬀers-from-Pure-Optimization"><span class="nav-number">1.</span> <span class="nav-text">1. How Learning Diﬀers from Pure Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-Empirical-Risk-Minimization"><span class="nav-number">1.1.</span> <span class="nav-text">1.1  Empirical Risk Minimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-Surrogate-Loss-Functions-and-Early-Stopping"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 Surrogate Loss Functions and Early Stopping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Batch-and-Minibatch-Algorithms"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Batch and Minibatch Algorithms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Challenges-in-Neural-Network-Optimization"><span class="nav-number">2.</span> <span class="nav-text">2. Challenges in Neural Network Optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Ill-Conditioning"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Ill-Conditioning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Local-Minima"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Local Minima</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Plateaus-Saddle-Points-and-other-Flat-Regions"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Plateaus, Saddle Points and other Flat Regions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-Cliffs-and-Exploding-Gradients"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 Cliffs and Exploding Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-Long-Term-Dependencies"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 Long-Term Dependencies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-Inexact-Gradients"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 Inexact Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-Poor-Correspondence-between-Local-and-Global-Structure"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 Poor Correspondence between Local and Global Structure</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-8-Theoretical-Limits-of-Optimization"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 Theoretical Limits of Optimization</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Basic-Algorithms"><span class="nav-number">3.</span> <span class="nav-text">3. Basic Algorithms</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-SGD"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 SGD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-Momentum"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Momentum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-Nesterov-Momentum"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Nesterov Momentum</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Parameter-Initialization-Strategies"><span class="nav-number">4.</span> <span class="nav-text">4. Parameter Initialization Strategies</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#权重"><span class="nav-number">4.1.</span> <span class="nav-text">权重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#偏置"><span class="nav-number">4.2.</span> <span class="nav-text">偏置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方差或精确度参数"><span class="nav-number">4.3.</span> <span class="nav-text">方差或精确度参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Algorithms-with-Adaptive-Learning-Rates"><span class="nav-number">5.</span> <span class="nav-text">5. Algorithms with Adaptive Learning Rates</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-AdaGrad"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 AdaGrad</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-RMSProp"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 RMSProp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-Adam"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 Adam</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Approximate-Second-Order-Methods"><span class="nav-number">6.</span> <span class="nav-text">6. Approximate Second-Order Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-Newton-Method"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 Newton Method</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-Conjugate-Gradients"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 Conjugate Gradients</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-BFGS"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 BFGS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Optimization-Strategies-and-Meta-Algorithms"><span class="nav-number">7.</span> <span class="nav-text">7. Optimization Strategies and Meta-Algorithms</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-1-Batch-Normalization"><span class="nav-number">7.1.</span> <span class="nav-text">7.1 Batch Normalization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-2-Coordinate-Desent"><span class="nav-number">7.2.</span> <span class="nav-text">7.2 Coordinate Desent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-3-Polyak-avarage"><span class="nav-number">7.3.</span> <span class="nav-text">7.3 Polyak avarage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-4-supervise-pre-Training"><span class="nav-number">7.4.</span> <span class="nav-text">7.4 supervise pre-Training</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-5-Designing-Models-to-Aid-Optimization"><span class="nav-number">7.5.</span> <span class="nav-text">7.5 Designing Models to Aid Optimization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-6-Continuation-Methods-and-Curriculum-Learning"><span class="nav-number">7.6.</span> <span class="nav-text">7.6 Continuation Methods and Curriculum Learning</span></a></li></ol></li></ol></div>
             
 
           </div>
