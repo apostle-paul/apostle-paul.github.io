@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="reinforce learning," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="以下内容摘录自  知乎专栏-强化学习知识大讲堂 知乎专栏-当我们在谈论数据挖掘 知乎专栏-智能单元">
+<meta name="keywords" content="reinforce learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="first glimps at RL">
+<meta property="og:url" content="http://yoursite.com/2018/09/08/first-glimps-at-RL/index.html">
+<meta property="og:site_name" content="Paul&#39;s Garden">
+<meta property="og:description" content="以下内容摘录自  知乎专栏-强化学习知识大讲堂 知乎专栏-当我们在谈论数据挖掘 知乎专栏-智能单元">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=912d3bcb545a17935ac071fb5d91a805">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=c8544b58c8bd224f52c05332e9ad202e">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p177">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p179">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=4f65e8291ad800627a3d5e6badfbbef7">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=fc7090e02f644e3c386e5d8be31a74cb">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=abebc368829fa26b60b8d4016b41f94f">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=539a90c4fdf405bd9cf4710071af2073">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=3c5e0ea40dab30e91d2eb19439326626">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p202">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=a418b0fe2aa23743029418435c89c2ca">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=311f6eba28e0f6b53bbe62bacd3c65af">
+<meta property="og:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=f704b13fe3af4fa72312a9b858b6404e">
+<meta property="og:updated_time" content="2018-09-08T16:04:34.326Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="first glimps at RL">
+<meta name="twitter:description" content="以下内容摘录自  知乎专栏-强化学习知识大讲堂 知乎专栏-当我们在谈论数据挖掘 知乎专栏-智能单元">
+<meta name="twitter:image" content="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=912d3bcb545a17935ac071fb5d91a805">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/08/first-glimps-at-RL/"/>
+
+
+
+
+
+  <title>first glimps at RL | Paul's Garden</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Paul's Garden</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/08/first-glimps-at-RL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Paul Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Paul's Garden">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">first glimps at RL</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-08T23:23:28+08:00">
+                2018-09-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/study-notes/" itemprop="url" rel="index">
+                    <span itemprop="name">study notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>以下内容摘录自</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/sharerl" target="_blank" rel="noopener">知乎专栏-强化学习知识大讲堂</a></li>
+<li><a href="https://zhuanlan.zhihu.com/data-miner" target="_blank" rel="noopener">知乎专栏-当我们在谈论数据挖掘</a></li>
+<li><a href="https://zhuanlan.zhihu.com/intelligentunit" target="_blank" rel="noopener">知乎专栏-智能单元</a><a id="more"></a>
+</li>
+</ul>
+<h3 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h3><ul>
+<li>在监督学习和非监督学习中，数据是静态的不需要与环境进行交互，比如图像识别，只要给足够的差异样本，将数据输入到深度网络中进行训练即可</li>
+<li>强化学习的学习过程是个动态的，不断交互的过程，所需要的数据也是通过与环境不断地交互产生的。</li>
+<li>与监督学习和非监督学习相比，强化学习涉及到的对象更多，比如动作，环境，状态转移概率和回报函数等</li>
+</ul>
+<hr>
+<h4 id="马尔科夫"><a href="#马尔科夫" class="headerlink" title="马尔科夫"></a>马尔科夫</h4><p>第一个概念是马尔科夫性：所谓马尔科夫性是指系统的下一个状态$s_{t+1}$仅与当前状态$s_t$有关，而与以前的状态无关。</p>
+<p>第二个概念是马尔科夫过程<br>马尔科夫过程的定义：马尔科夫过程是一个二元组$\left(S,P\right)$，且满足：S是有限状态集合，P是状态转移概率。</p>
+<p>第三个概念是马尔科夫决策过程<br>马尔科夫决策过程由元组$(S,A,P,R,\gamma)$描述，其中：S为有限的状态集, A 为有限的动作集, P 为状态转移概率, R为回报函数, $\gamma$为折扣因子，用来计算累积回报。注意，跟马尔科夫过程不同的是，马尔科夫决策过程的状态转移概率是包含动作的即：<br>$P_{ss’}^{a}=P\left[S_{t+1}=s’|S_t=s,A_t=a\right]$</p>
+<hr>
+<p><strong>强化学习的目标是给定一个马尔科夫决策过程，寻找最优策略。</strong><br>所谓策略是指状态到动作的映射，策略常用符号$\pi$表示，它是指给定状态s 时，动作集上的一个分布，即<br>$\pi\left(a|s\right)=p\left[A_t=a|S_t=s\right] (1.1)$<br><em>公式(1.1)的含义是：策略$\pi$在每个状态s 指定一个动作概率。如果给出的策略$\pi$是确定性的，那么策略$\pi$在每个状态s指定一个确定的动作。</em><br>这里的最优是指得到的总回报最大。</p>
+<p>当给定一个策略$\pi$时，我们就可以计算累积回报了。首先定义累积回报：</p>
+<p>$G_t=R_{t+1}+\gamma R_{t+2}+\cdots =\sum_{k=0}^{\infty}{\gamma^kR_{t+k+1}}\\\\\ \left(1.2\right)$<br>不过，给定策略$\pi$，从状态$s_1$出发，可能有多个序列状态，每个序列状态都会有一个累积回报。而这些回报的期望，就是状态-价值函数了：<br>$\upsilon_{\pi}\left(s\right)=E_{\pi}\left[\sum_{k=0}^{\infty}{\gamma^kR_{t+k+1}|S_t=s}\right] (1.3)$<br>相应地，状态-行为值函数为：</p>
+<script type="math/tex; mode=display">
+q_{\pi}(s,a)=E_{\pi}[\sum_{k=0}^{\infty}{\gamma^kR_{t+k+1}|S_t=s,A_t=a}](1.4)</script><hr>
+<h4 id="bellman函数"><a href="#bellman函数" class="headerlink" title="bellman函数"></a>bellman函数</h4><p>实际编程的时候不会根据定义去实现，而是会去根据bellman方程<br>由状态值函数的定义式(1.3)可以得到：<br>$\upsilon\left(s\right)=E\left[G_t|S_t=s\right]$<br>$=E\left[R_{t+1}+\gamma R_{t+2}+\cdots |S_t=s\right]$ $=E\left[R_{t+1}\gamma\left(R_{t+2}+\gamma R_{t+3}+\cdots\right)|S_t=s\right]$<br>$=E\left[R_{t+1}+\gamma G_{t+1}|S_t=s\right]$<br>$=E\left[R_{t+1}+\gamma\upsilon\left(S_{t+1}\right)|S_t=s\right]  (1.5)$</p>
+<p>同样的，可以得到状态-动作价值函数的bellman函数<br>同样我们可以得到状态-动作值函数的贝尔曼方程：<br>$q_{\pi}\left(s,a\right)=E_{\pi}\left[R_{t+1}+\gamma q\left(S_{t+1},A_{t+1}\right)|S_t=s,A_t=a\right]\left(1.6\right)$</p>
+<p>经过推导得到行为状态-行为值函数：</p>
+<p>$q_{\pi}\left(s,a\right)=R_{s}^{a}+\gamma\sum_{s’\in S}{P_{ss’}^{a}\sum_{a’\in A}{\pi\left(a’|s’\right)q_{\pi}\left(s’,a’\right)}}\left(1.11\right)$</p>
+<hr>
+<p>计算状态值函数的目的是为了构建学习算法从数据中得到最优策略。每个策略对应着一个状态值函数，最优策略自然对应着最优状态值函数。<br>定义：最优状态值函数$\epsilon^{*}(s)$,为在所有策略中值最大的值函数即：$\epsilon^{*}\left(s\right)=\max_{\pi}\epsilon_{\pi}\left(s\right)$，最优状态-行为值函数$q^*\left(s,a\right)$为在所有策略中最大的状态-行为值函数，即：</p>
+<p>$q^*\left(s,a\right)=\max_{\pi}q_{\pi}\left(s,a\right)$</p>
+<p>若已知最优状态-动作值函数，最优策略可通过直接最大化$q^*\left(s,a\right)$ 来决定。</p>
+<hr>
+<h4 id="形式化描述"><a href="#形式化描述" class="headerlink" title="形式化描述"></a>形式化描述</h4><p>我们定义一个离散时间有限范围的折扣马尔科夫决策过程$M=\left(S,A,P,r,\rho_0,\gamma,T\right)$，其中S为状态集，A为动作集，$P:S\times A\times S\rightarrow R$是转移概率，$r:S\times A\rightarrow\left[-R_{\max},R_{\max}\right]$为立即回报函数，$\rho_0:S\rightarrow R$是初始状态分布，$\gamma\in\left[0,1\right]$为折扣因子，T为水平范围（其实就是步数）. $\tau$为一个轨迹序列，即$\tau =\left(s_0,a_0,s_1,a_1,\cdots\right)$，累积回报为$R=\sum_{t=0}^T{\gamma^t}r_t$，强化学习的目标是：找到最优策略$\pi$，使得该策略下的累积回报期望最大，即：$\max_{\pi}\int{R\left(\tau\right)}p_{\pi}\left(\tau\right)d\tau$。</p>
+<p>根据策略最优定理知道，当值函数最优时采取的策略也是最优的。反过来，策略最优时值函数也最优。</p>
+<h3 id="基于模型的动态规划方法"><a href="#基于模型的动态规划方法" class="headerlink" title="基于模型的动态规划方法"></a>基于模型的动态规划方法</h3><p>根据转移概率P是否已知，可以分为基于模型的动态规划方法和基于无模型的强化学习方法。<br><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=912d3bcb545a17935ac071fb5d91a805" alt="912d3bcb545a17935ac071fb5d91a805.jpeg"><br>基于模型的强化学习可以利用动态规划的思想来解决。<br>动态规划问题，需要满足两个条件：</p>
+<ol>
+<li>整个优化问题可以分解为多个子优化问题，</li>
+<li>子优化问题的解可以被存储和重复利用</li>
+</ol>
+<p>强化学习可以利用马尔科夫决策过程来描述，利用贝尔曼最优性原理得到贝尔曼最优化方程，从bellman方程可知，MDP符合使用动态规划的两个条件。<br>动态规划的核心是找到最优值函数。</p>
+<hr>
+<p>第一个问题是：给定一个策略$\pi$，如何计算在策略$\pi$下的值函数？<br>值函数的计算公式是：<br>${\epsilon_\pi }\left( s \right) = \sum\limits_{a \in A} {\pi \left( {a|s} \right)} \left( {R_s^a + \gamma \sum\limits_{s’ \in S} {P_{ss’}^a{\epsilon_\pi }\left( {s’} \right)} } \right){\kern 1pt} {\kern 1pt} {\kern 1pt} {\kern 1pt}  (2.4)$</p>
+<p>因为$\upsilon_\pi(s’)$也是未知的，所以需要用bootstrapping算法来计算。</p>
+<h4 id="bootstrapping算法"><a href="#bootstrapping算法" class="headerlink" title="bootstrapping算法"></a>bootstrapping算法</h4><p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=c8544b58c8bd224f52c05332e9ad202e" alt="c8544b58c8bd224f52c05332e9ad202e.jpeg"></p>
+<hr>
+<p>第二个要解决的问题是：如何利用值函数进行策略改善，从而得到最优策略？<br>一个很自然的方法是当已知当前策略的值函数时，在每个状态采用贪婪策略对当前策略进行改进，即：</p>
+<script type="math/tex; mode=display">
+\pi_{l + 1}(s) \in \mathop {\arg \max} \limits_a q^{\pi_l}(s,a)</script><hr>
+<p>至此，我们已经给出了策略评估算法和策略改进算法。万事已具备，将策略评估算法和策略改进算合起来便组成了策略迭代算法。</p>
+<p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p177" alt="b53fa72d9283f865c0af591d1839c0e9.jpeg"><br><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p179" alt="597f2494f36c7613ccc6f0e8f4f0545d.jpeg"></p>
+<p><strong>这就是策略迭代算法。</strong></p>
+<hr>
+<p>在进行策略评估时，值函数的收敛需要很多轮迭代。那么，我们需要等到值函数完全收敛么？不需要，如果我们在进行一次评估之后就进行策略改善，则称为<strong>值函数迭代算法</strong>。<img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p75?hash=4f65e8291ad800627a3d5e6badfbbef7" alt="4f65e8291ad800627a3d5e6badfbbef7.jpeg"><br>需要注意的是在每次迭代过程，需要对状态空间进行一次扫描，同时在每个状态对动作空间进行扫描以便得到贪婪的策略。</p>
+<h3 id="无模型的强化学习算法"><a href="#无模型的强化学习算法" class="headerlink" title="无模型的强化学习算法"></a>无模型的强化学习算法</h3><p>无模型的强化学习的思想更有模型的一样：先进行策略评估，即计算出当前策略对应的值函数，然后利用值函数改进当前策略。而区别在于，无模型的强化学习算法，不知道状态转移概率$P_{ss’}$。<br>回顾值函数的定义：</p>
+<script type="math/tex; mode=display">
+\epsilon_{\pi}\left(s\right)=E_{\pi}\left[\sum_{k=0}^{\infty}{\gamma^kR_{t+k+1}|S_t=s}\right] (1.3)  \\
+q_{\pi}\left(s,a\right)=E_{\pi}\left[\sum_{k=0}^{\infty}{\gamma^kR_{t+k+1}|S_t=s,A_t=a}\right](1.4)</script><ul>
+<li>动态规划的方法是利用模型对该期望进行计算。</li>
+<li>在没有模型时，我们可以采用蒙特卡罗的方法计算该期望，即利用随机样本来估计期望。</li>
+</ul>
+<p>在计算值函数时，蒙特卡罗方法是利用经验平均代替随机变量的期望。</p>
+<hr>
+<h4 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h4><p>如何获得充足的经验是无模型强化学习的核心所在。<br>无模型的方法充分评估策略值函数的前提是每个状态都能被访问到。因此，在蒙特卡洛方法中必须采用一定的方法保证每个状态都能被访问到。其中一种方法是探索性初始化。<br>所谓探索性初始化是指每个状态都有一定的几率作为初始状态。</p>
+<p>策略必须是温和的，即对所有的状态s 和a 满足：$\pi\left(a|s\right)&gt;0$。<br>典型的温和策略是$\varepsilon -soft$策略，即：</p>
+<p>$\pi\left(a|s\right)\gets\left\{\begin{array}{c} 1-\varepsilon +\frac{\varepsilon}{\left| A\left(s\right)\right|}\ if\ a=arg\max_aQ\left(s,a\right)\\\\ \frac{\varepsilon}{\left| A\left(s\right)\right|}\ if\ a\ne arg\max_aQ\left(s,a\right)\\ \end{array}\right.\\\\\left(3.5\right)$</p>
+<hr>
+<p>递增计算平均的方法：<br><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=fc7090e02f644e3c386e5d8be31a74cb" alt="fc7090e02f644e3c386e5d8be31a74cb.jpeg"></p>
+<p>根据探索策略（行动策略）和评估的策略是否是同一个策略，蒙特卡罗方法又分为on-policy和off-policy.</p>
+<hr>
+<h5 id="online-policy"><a href="#online-policy" class="headerlink" title="online-policy"></a>online-policy</h5><p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=abebc368829fa26b60b8d4016b41f94f" alt="abebc368829fa26b60b8d4016b41f94f.jpeg"><br><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=539a90c4fdf405bd9cf4710071af2073" alt="539a90c4fdf405bd9cf4710071af2073.jpeg"></p>
+<hr>
+<h5 id="offline-policy"><a href="#offline-policy" class="headerlink" title="offline-policy"></a>offline-policy</h5><p>异策略是指产生数据的策略与评估和改善的策略不是同一个策略。我们用$\pi$表示用来评估和改进的策略，用$\mu$表示产生样本数据的策略。</p>
+<p>利用行为策略产生的数据评估目标策略需要利用<strong>重要性采样importance sampling</strong>方法。<br>最后给出异策略每次访问蒙特卡罗算法的伪代码：</p>
+<p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p76?hash=3c5e0ea40dab30e91d2eb19439326626" alt="3c5e0ea40dab30e91d2eb19439326626.jpeg"></p>
+<h3 id="时间差分法"><a href="#时间差分法" class="headerlink" title="时间差分法"></a>时间差分法</h3><p>时间差分(TD)方法是强化学习理论中最核心的内容，是强化学习领域最重要的成果，没有之一。与动态规划的方法和蒙特卡罗的方法比，时间差分的方法主要不同点在值函数估计上面。<br>时间差分方法结合了蒙特卡罗的采样方法（即做试验）和动态规划方法的bootstrapping(利用后继状态的值函数估计当前值函数)，其示意图如图4.4所示。<br>TD方法更新值函数的公式为(4.3)：</p>
+<p>$V\left(S_t\right)\gets V\left(S_t\right)+\alpha\left(R_{t+1}+\gamma V\left(S_{t+1}\right)-V\left(S_t\right)\right) (4.3)$</p>
+<p>其中$R_{t+1}+\gamma V\left(S_{t+1}\right)$称为TD目标，与（4.2）中的$G_t$相对应，两者不同之处是TD目标利用了bootstrapping方法估计当前值函数。$\delta_t=R_{t+1}+\gamma V\left(S_{t+1}\right)-V\left(S_t\right)$称为TD偏差。</p>
+<p>下面我们从原始公式给出动态规划(DP)，蒙特卡罗方法(MC)，和时间差分方法(TD)的不同之处。</p>
+<p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENResource/p202" alt="7b193eb914a3283f2e2ad07b3c95ed4e.jpeg"></p>
+<p>TD 算法可以避免每次必须得到整个 Episode 才能改进 Policy。TD 算法的 Value Function V(s) 通过如下方式计算，可以看出其兼具 MC 与 TD 的特点，即 Sample 和 Bootstrap。</p>
+<p>$V(S_t) = V(S_t) + \alpha (G_t - V(S_t)) = V(S_t) + \alpha (R_{t+1} + \gamma V(S_{t+1}) - V(S_t))$</p>
+<hr>
+<p>online-policy</p>
+<p>Sarsa算法</p>
+<p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=a418b0fe2aa23743029418435c89c2ca" alt="a418b0fe2aa23743029418435c89c2ca.jpeg"></p>
+<hr>
+<p>offline-policy<br>Q-Learning</p>
+<p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=311f6eba28e0f6b53bbe62bacd3c65af" alt="311f6eba28e0f6b53bbe62bacd3c65af.jpeg"></p>
+<hr>
+<h4 id="MC与TD比较"><a href="#MC与TD比较" class="headerlink" title="MC与TD比较"></a>MC与TD比较</h4><ul>
+<li>MC 需要一条完整的 Episode，而 TD 不需要；这也意味着 MC 只能处理有终止 State 的任务，而 TD 无此限制</li>
+<li>由于 MC 是根据完整的 Episode 来估计 V(s) 的，因此它是 unbiased 的，但是会由于结果会受整个 Episode 的影响，带来较高的 Variance，即较大波动；相对的，TD 是根据 Episode 的中相邻状态来估计 V(s) ，结果只受少数状态影响，因此具有较低的 Variance，但必然是 biased 的</li>
+<li>MC 并不严格要求任务的 Markov 性，且具有很好的收敛性，但是计算量大，更新缓慢； TD 对任务的 Markov 性要求比较高，但是效率很高，一般也会收敛</li>
+</ul>
+<hr>
+<h4 id="DQN"><a href="#DQN" class="headerlink" title="DQN"></a>DQN</h4><p>Q-learning 通过贪婪的方式改进 Q(s,a) ，得到最优 Policy。但是 Q-learning 仅适用于求解小规模，离散空间问题。当 State 空间或 Action 空间规模很大，或者为连续空间时，无法再通过采样遍历足够多的 State时，Q-learning 可能就不再有效。此时，可以通过 Function Approximator 的方式解决，即利用函数 $Q(s,a;\theta)$ 逼近最优的 $Q^*(s,a)$ ，于是我们只需要求解 $Q(s,a;\theta)$ 即可。若更进一步，还可以利用 DNN 来学习 $Q(s,a;\theta)$ ，于是就有了 DQN 的基本思想。</p>
+<h5 id="LOSS"><a href="#LOSS" class="headerlink" title="LOSS"></a>LOSS</h5><p>如上文所述，有最优 Q 的迭代式为</p>
+<p>$Q^*(s,a) = E_{s’}[R^a_{ss’} + \gamma \max_{a’} Q^*(s’,a’)|s,a]$</p>
+<p>当我们用函数来逼近它，即</p>
+<p>$Q^* = E_{s’}[r + \gamma \max_{a’} Q(s’,a’;\theta^{-}_i)]$</p>
+<p>于是，整个迭代过程的 Loss 可以被定义为</p>
+<p>$<br>L_i(\theta_i) = E_{s,a,r}[(E_{s’}[Q^{*}|s,a] - Q(s,a;\theta_i))^2] \\<br>= E_{s,a,r,s^{‘}}[(Q^{*} - Q(s,a;\theta_i))^2] + E_{s,a,r}[var_{s’}[Q^{*}]]<br>$</p>
+<h5 id="样本"><a href="#样本" class="headerlink" title="样本"></a>样本</h5><p>除了 Loss，训练 DQN 还需要训练样本。对于 Atari 游戏过程这个时间序列事件，一个 Episode 其相邻状态相关性是非常强的，如果直接用整个 Episode 来训练，样本的强关联性与 Episode 采样数量不足会使结果方差很大。在 DQN 中，采用了 Experience Replay 的方法，即先将所有样本存储起来，然后随机采样，通过破坏样本序列强相关，同时间接增加了训练样本数量的方式，降低了方差。</p>
+<h5 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h5><p><img src="evernotecid://74F421DB-DF5E-4EEE-B947-C0C980D2DC0B/appyinxiangcom/14855437/ENNote/p77?hash=f704b13fe3af4fa72312a9b858b6404e" alt="f704b13fe3af4fa72312a9b858b6404e.jpeg"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/reinforce-learning/" rel="tag"># reinforce learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/29/flower-book-Optimization-for-Training-DeepModels/" rel="next" title="flower book: Optimization for Training DeepModels">
+                <i class="fa fa-chevron-left"></i> flower book: Optimization for Training DeepModels
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Paul Lee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/apostle-paul" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:lplabboy@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础概念"><span class="nav-number">1.</span> <span class="nav-text">基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#马尔科夫"><span class="nav-number">1.1.</span> <span class="nav-text">马尔科夫</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bellman函数"><span class="nav-number">1.2.</span> <span class="nav-text">bellman函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#形式化描述"><span class="nav-number">1.3.</span> <span class="nav-text">形式化描述</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于模型的动态规划方法"><span class="nav-number">2.</span> <span class="nav-text">基于模型的动态规划方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bootstrapping算法"><span class="nav-number">2.1.</span> <span class="nav-text">bootstrapping算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无模型的强化学习算法"><span class="nav-number">3.</span> <span class="nav-text">无模型的强化学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#探索"><span class="nav-number">3.1.</span> <span class="nav-text">探索</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#online-policy"><span class="nav-number">3.1.1.</span> <span class="nav-text">online-policy</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#offline-policy"><span class="nav-number">3.1.2.</span> <span class="nav-text">offline-policy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间差分法"><span class="nav-number">4.</span> <span class="nav-text">时间差分法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MC与TD比较"><span class="nav-number">4.1.</span> <span class="nav-text">MC与TD比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DQN"><span class="nav-number">4.2.</span> <span class="nav-text">DQN</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#LOSS"><span class="nav-number">4.2.1.</span> <span class="nav-text">LOSS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#样本"><span class="nav-number">4.2.2.</span> <span class="nav-text">样本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#算法"><span class="nav-number">4.2.3.</span> <span class="nav-text">算法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Paul Lee</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
