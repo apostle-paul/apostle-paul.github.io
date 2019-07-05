@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="machine learning," />
 
 
 
@@ -79,14 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="key points for &amp;lt;&amp;lt; machine learning yearning &amp;gt;&amp;gt;">
+<meta name="keywords" content="machine learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="notes for machine learning yearning">
+<meta property="og:url" content="http://yoursite.com/2019/02/27/notes-for-machine-learning-yearning/index.html">
 <meta property="og:site_name" content="Paul&#39;s Garden">
+<meta property="og:description" content="key points for &amp;lt;&amp;lt; machine learning yearning &amp;gt;&amp;gt;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-25T16:33:53.050Z">
+<meta property="og:updated_time" content="2019-07-04T02:39:02.095Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
+<meta name="twitter:title" content="notes for machine learning yearning">
+<meta name="twitter:description" content="key points for &amp;lt;&amp;lt; machine learning yearning &amp;gt;&amp;gt;">
 
 
 
@@ -116,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/2019/02/27/notes-for-machine-learning-yearning/"/>
 
 
 
 
 
-  <title>categories | Paul's Garden</title>
+  <title>notes for machine learning yearning | Paul's Garden</title>
   
 
 
@@ -237,40 +241,205 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/27/notes-for-machine-learning-yearning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Paul Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Paul's Garden">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">categories</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <div class="category-all-page">
-            <div class="category-all-title">
-                3 categories in total
-            </div>
-            <div class="category-all">
-              <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/paper-notes/">paper notes</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/reading-notes/">reading notes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study-notes/">study notes</a><span class="category-list-count">1</span></li></ul>
-            </div>
-          </div>
+          <h1 class="post-title" itemprop="name headline">notes for machine learning yearning</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-27T16:30:40+08:00">
+                2019-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reading-notes/" itemprop="url" rel="index">
+                    <span itemprop="name">reading notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <p>key points for &lt;&lt; machine learning yearning &gt;&gt;<br><a id="more"></a></p>
+<h3 id="0-scale-drives-machine-learning-progress"><a href="#0-scale-drives-machine-learning-progress" class="headerlink" title="0. scale drives machine learning progress"></a>0. scale drives machine learning progress</h3><p>为什么一些深度学习的想法最近起飞了?</p>
+<ul>
+<li>电子化的数据更多了</li>
+<li>算力够大了</li>
+</ul>
+<p>现在提升模型效果的可靠的路径之一仍然是：</p>
+<ul>
+<li>弄更多的数据</li>
+<li>训更大的网络</li>
+</ul>
+<h3 id="1-setting-up-development-and-test-sets"><a href="#1-setting-up-development-and-test-sets" class="headerlink" title="1. setting up development and test sets"></a>1. setting up development and test sets</h3><p>一般的分法：</p>
+<ul>
+<li>training set: 用来跑模型的；</li>
+<li>dev(development) set: 用来调参，选特征等对模型进行优化调整的，有时候也叫 hold-out cross validation set；</li>
+<li>test set: 用来评估最终的模型效果的。<br>dev set 和test set很重要，核心一点：测试集要反应你的算法真实使用场景下的分布。即使你的训练集跟这个分布有差别。没有真正的测试集，也要想办法去获得。如果没有任何办法获得，那需要明白可能泛化不太好的风险。<br>dev set和test set应该来自同一个分布。否则提升算法的效率会很低，原因是：</li>
+<li>如果是同一个分布，一旦dev set上表现得好，test set上不好，那问题很明确：算法在dev set上overfit了，需要增加dev set的数据。</li>
+<li>如果是不同的分布，一旦test set上表现不好，那可能的原因就多了：<ol>
+<li>dev set上overfit了。</li>
+<li>test set比 dev set上的分布更难学，所以不是算法的问题</li>
+<li>test set不是更难学，只是不同。</li>
+</ol>
+</li>
+</ul>
+<p>dev set应该多大？大到足以区分不同的算法在指标上带来的diff。例如，准确率从90.0%提升到了90.1%，那100个样本的dev set显然是不够的。<br>test set应该多大？大到可以非常置信地评估整个系统的性能。<br>处理多个指标上的优化：</p>
+<ul>
+<li>想办法给出一个单值的指标，例如F1 score, 有利于模型的快速迭代：它可以让你从多个结果中快速选出最好的那个算法，会有一个明确的提升方向。</li>
+<li>区分出来satisficing metric和optimizing metric。</li>
+</ul>
+<p>什么时候更换dev/test sets和metrics? 对于一个新的项目，通常会很快先初始化一个dev/test sets和metrics，但是这些不一定真的合适，那么什么时候换呢？</p>
+<ul>
+<li>发现dev/test set跟应用中的真实分布不一致</li>
+<li>在dev set上overfit了。这里要注意，不要用test set来做任何关于算法的优化，否则很快就会在test set上也overfit了，就再也没有对系统无偏的评估了。</li>
+<li>优化目标变了，就要换metric了。例如，一开始的优化目标是识别猫，后来，你发现，增加一个过滤掉色情图片的优化目标。<br>总之就是，一旦发现方向不对，就该换了。</li>
+</ul>
+<h3 id="2-Basic-Error-Analysis"><a href="#2-Basic-Error-Analysis" class="headerlink" title="2. Basic Error Analysis"></a>2. Basic Error Analysis</h3><p>不要一开始就尝试建立一个完美的系统，先建立一个基本的系统，然后不断迭代。所谓小步快跑。<br>错误分析的时候，可以抽一些错误样本来一是看某一种类型的错误占比，由</p>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/machine-learning/" rel="tag"># machine learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/08/first-glimps-at-RL/" rel="next" title="first glimps at RL">
+                <i class="fa fa-chevron-left"></i> first glimps at RL
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/05/Deep-Reinforcement-Learning-for-Sponsored-Search-Real-time-Bidding/" rel="prev" title="Deep Reinforcement Learning for Sponsored Search Real-time Bidding">
+                Deep Reinforcement Learning for Sponsored Search Real-time Bidding <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -279,6 +448,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -299,8 +472,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -376,6 +558,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-scale-drives-machine-learning-progress"><span class="nav-number">1.</span> <span class="nav-text">0. scale drives machine learning progress</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-setting-up-development-and-test-sets"><span class="nav-number">2.</span> <span class="nav-text">1. setting up development and test sets</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Basic-Error-Analysis"><span class="nav-number">3.</span> <span class="nav-text">2. Basic Error Analysis</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
