@@ -341,31 +341,14 @@
 
       
         
-          
-            <h1 id="1-problem-definition"><a href="#1-problem-definition" class="headerlink" title="1. problem definition"></a>1. problem definition</h1><p>最开始，问题的定义是：</p>
-<script type="math/tex; mode=display">
-max cv/cost
-s.t. cv > g</script><p>都是per day, per userid的setting。即某个广告主，在满足一天转化量大于某个最小值g的限定下， 最大化cpa的倒数。</p>
-<p>论文讲问题等价为：</p>
-<script type="math/tex; mode=display">
-max cv
-s.t. cost = c</script><p>即，在一天消费一定的情况下，最大化cv量。</p>
-<h1 id="2-model-setup"><a href="#2-model-setup" class="headerlink" title="2. model setup"></a>2. model setup</h1><p>state s: s = <b, t,="" auct=""></b,></p>
-<ul>
-<li>b: 剩下的预算</li>
-<li>t: 决策序列的步数</li>
-<li>auct: 跟竞拍相关的特征向量</li>
-</ul>
-<p>Action a: 实时竞拍的bid</p>
-<p>Reward r(s, a): 在s下执行a，得到的cv，即cv。</p>
-<p>Episode ep： 一天是一个ep<br>模型目标是找到最优的<script type="math/tex">\pi(s)</script>，讲s映射到一个动作a，使累积的reward最大：<script type="math/tex">\Sigma \gamma^(i-1) r(s_i, a_i)</script>。</p>
-<p>秒级别和分钟级别的流量状态变化太剧烈，没有固定的pattern，所以在小时级别进行聚合。这样一个episode，被分为了24个step，每个小时一个。<br>而状态s中的auct，包括了clk_sum, show_sum, cost_sum, ctr, cvr, acp等。<br>这样在不同的天，就可以得到一个固定的状态转移概率。</p>
-<p>action也不是直接设置bid，而是设置pcvr前面乘的系数<script type="math/tex">\alpha</script>。</p>
-<h1 id="3-Algorithms"><a href="#3-Algorithms" class="headerlink" title="3. Algorithms"></a>3. Algorithms</h1><p>套用了一下DQN</p>
-<h1 id="4-Massive-agent-Model"><a href="#4-Massive-agent-Model" class="headerlink" title="4. Massive-agent Model"></a>4. Massive-agent Model</h1><p>当大量agent一起竞争的时候，之前建立的模型的效果会减弱。<br>所以，引入了一个全局合作的机制，在各个agent选择了动作之后，agent会受到自己的reward和一个全局的reward。</p>
-<h1 id="5-Experiment"><a href="#5-Experiment" class="headerlink" title="5. Experiment"></a>5. Experiment</h1><p>随机选了1000个大客户来进行实验，覆盖1亿pv。用pcvr来模拟reward。</p>
-
-          
+          <p>a paper from alibaba<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/07/05/Deep-Reinforcement-Learning-for-Sponsored-Search-Real-time-Bidding/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
